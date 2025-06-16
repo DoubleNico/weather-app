@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ro">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Weather App</title>
+
+    <link rel="stylesheet" href="./styles.css" />
+
+    <script type="module" src="./app.js" defer></script>
+  </head>
+
+  <body>
+    <header class="header">
+      <button
+        id="theme-toggle"
+        aria-label="Theme Switcher"
+        class="theme-toggle"
+      >
+        Dark
+      </button>
+      <h1>Weather App</h1>
+    </header>
+
+    <main class="container">
+      <form id="search-form" class="search">
+        <input
+          id="city-input"
+          type="text"
+          placeholder="Introdu numele orașului"
+          autocomplete="off"
+        />
+        <button id="search-btn" type="submit">Cauta</button>
+      </form>
+
+      <section id="loading" class="hidden">Se incarca...</section>
+
+      <section id="error" class="hidden"></section>
+
+      <section id="weather-display" class="card hidden">
+        <h2 id="city-name"></h2>
+        <div class="temp-row">
+          <img id="weather-icon" alt="" />
+          <span id="temperature"></span>
+        </div>
+        <p id="description"></p>
+
+        <ul class="details">
+          <li>Umiditate: <span id="humidity"></span></li>
+          <li>Presiune: <span id="pressure"></span></li>
+          <li>Vant: <span id="wind"></span></li>
+          <li>Vizibilitate: <span id="visibility"></span></li>
+          <li>Rasarit: <span id="sunrise"></span></li>
+          <li>Apus: <span id="sunset"></span></li>
+        </ul>
+      </section>
+    </main>
+  </body>
+</html>
