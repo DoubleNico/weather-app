@@ -24,12 +24,15 @@
 
     <main class="container">
       <form id="search-form" class="search">
-        <input
-          id="city-input"
-          type="text"
-          placeholder="Introdu numele orașului"
-          autocomplete="off"
-        />
+        <div class="input-container">
+          <input
+            id="city-input"
+            type="text"
+            placeholder="Introdu numele orasului"
+            autocomplete="off"
+          />
+          <ul id="autocomplete-list" class="autocomplete-list hidden"></ul>
+        </div>
         <button id="search-btn" type="submit">Cauta</button>
       </form>
 
