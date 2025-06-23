@@ -1,7 +1,25 @@
+import { showError } from "../controllers/ui-controller.js";
+import { ERROR_MESSAGES, GEOLOCATION_ERROR_MESSAGES } from "./config.js";
+
 const fallbackToIp = async () => {
   try {
+    // prima data cand folosesc acest api
     const response = await fetch("https://ipapi.co/json/");
+
+    if (!response.ok) {
+      const errorMessage =
+        GEOLOCATION_ERROR_MESSAGES[response.status] ||
+        ERROR_MESSAGES.IP_LOCATION_FAILED;
+      showError(errorMessage);
+      throw new Error(errorMessage);
+    }
+
     const data = await response.json();
+
+    if (!data.latitude || !data.longitude) {
+      showError(ERROR_MESSAGES.IP_LOCATION_FAILED);
+      throw new Error(ERROR_MESSAGES.IP_LOCATION_FAILED);
+    }
 
     return {
       latitude: data.latitude,
@@ -10,15 +28,23 @@ const fallbackToIp = async () => {
       accuracy: "city",
     };
   } catch (error) {
-    throw new Error("Nu am putut determina locatia IP: " + error.message);
+    if (error.name === "TypeError" && error.message.includes("fetch")) {
+      showError(ERROR_MESSAGES.CONNECTION_LOST);
+      throw new Error(ERROR_MESSAGES.CONNECTION_LOST);
+    }
+    showError(ERROR_MESSAGES.IP_LOCATION_FAILED);
+    throw new Error(ERROR_MESSAGES.IP_LOCATION_FAILED);
   }
 };
 
 export const getCoords = () => {
   return new Promise((resolve, reject) => {
     if (!navigator.geolocation) {
-      console.log("Nu merge GPSul");
-      fallbackToIp().then(resolve).catch(reject);
+      fallbackToIp()
+        .then(resolve)
+        .catch(() => {
+          reject(new Error(ERROR_MESSAGES.GEOLOCATION_NOT_SUPPORTED));
+        });
       return;
     }
 
@@ -32,13 +58,22 @@ export const getCoords = () => {
         });
       },
       (error) => {
-        console.log("GPS gresit:", error.message);
-        fallbackToIp().then(resolve).catch(reject);
+        console.log("GPS-ul nu merge: ", error.message);
+        const errorMessage =
+          GEOLOCATION_ERROR_MESSAGES[error.code] ||
+          ERROR_MESSAGES.GEOLOCATION_POSITION_UNAVAILABLE;
+
+        fallbackToIp()
+          .then(resolve)
+          .catch(() => {
+            reject(new Error(errorMessage));
+          });
       },
+      // Niste valori la nimereala, sper sa mearga
       {
-        timeout: 10000,
+        timeout: 8000,
         enableHighAccuracy: true,
-        maximumAge: 300000,
+        maximumAge: 250000,
       }
     );
   });
