@@ -20,6 +20,9 @@ export const el = {
   unitSelect: document.querySelector("#unit-select"),
   langSelect: document.querySelector("#lang-select"),
   autocompleteList: document.querySelector("#autocomplete-list"),
+  historySection: document.querySelector("#history-section"),
+  historyList: document.querySelector("#history-list"),
+  clearHistoryBtn: document.querySelector("#clear-history-btn"),
 };
 
 export const showLoading = () => {
@@ -104,4 +107,53 @@ export const loadUserPreferences = () => {
     showError(ERROR_MESSAGES.PREFERENCES_LOAD_FAILED + `: ${error.message}`);
     return { unit: "metric", lang: "ro" };
   }
+};
+
+export const showHistory = () => el.historySection.classList.remove("hidden");
+export const hideHistory = () => el.historySection.classList.add("hidden");
+
+export const renderHistory = (historyItems) => {
+  if (!historyItems || historyItems.length === 0) {
+    el.historyList.innerHTML =
+      '<p class="no-history">Nu ai cautari recente</p>';
+    return;
+  }
+  if (!Array.isArray(historyItems)) {
+    console.error("Invalid history data:", historyItems);
+    el.historyList.innerHTML =
+      '<p class="no-history">Istoricul este invalid</p>';
+    return;
+  }
+  historyItems.sort((a, b) => b.timestamp - a.timestamp);
+
+  el.historyList.innerHTML = historyItems
+    .map((item) => {
+      const timeAgo = getTimeAgo(item.timestamp);
+      return `
+        <div class="history-item" data-city="${item.city}" data-lat="${item.coordinates.lat}" data-lon="${item.coordinates.lon}">
+          <div class="history-location">
+            <span class="city">${item.city}</span>
+            <span class="country">${item.country}</span>
+          </div>
+          <div class="history-time">${timeAgo}</div>
+        </div>
+      `;
+    })
+    .join("");
+};
+
+const getTimeAgo = (timestamp) => {
+  const now = Date.now();
+  const diff = now - timestamp;
+  const minutes = Math.floor(diff / 60000);
+  const hours = Math.floor(diff / 3600000);
+  const days = Math.floor(diff / 86400000);
+  if (minutes < 60) return `${minutes} minute in urma`;
+  if (hours < 24) return `${hours} ore în ura`;
+  return `${days} zile in urma`;
+};
+
+export const addHistoryEventListeners = (onHistoryClick, onClearHistory) => {
+  el.historyList.addEventListener("click", onHistoryClick);
+  el.clearHistoryBtn.addEventListener("click", onClearHistory);
 };
