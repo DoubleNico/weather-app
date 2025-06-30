@@ -3,7 +3,13 @@ import {
   getWeatherByCoords,
 } from "../modules/weather-service.js";
 import { getCoords } from "../modules/location-service.js";
-import { showLoading, showError, displayWeather } from "./ui-controller.js";
+import {
+  showLoading,
+  showError,
+  displayWeather,
+  renderHistory,
+} from "./ui-controller.js";
+import { historyService } from "../modules/history-service.js";
 import { ERROR_MESSAGES } from "../modules/config.js";
 
 export class SearchController {
@@ -56,7 +62,10 @@ export class SearchController {
 
       showLoading();
       const data = await getCurrentWeather(city);
+      historyService.addLocation(data);
+      renderHistory(historyService.getHistory());
       displayWeather(data);
+
       this.autocomplete.clear();
     } catch (err) {
       showError(err.message || ERROR_MESSAGES.UNKNOWN_ERROR);
