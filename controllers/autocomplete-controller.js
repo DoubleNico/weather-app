@@ -1,6 +1,15 @@
 import { cities } from "../data/cities-data.js";
 
+/**
+ * Controller pentru autocomplete-ul campului de oras.
+ */
 export class AutocompleteController {
+  /**
+   * Creeaza o noua instanta AutocompleteController.
+   * @param {HTMLInputElement} inputElement - Inputul pentru oras.
+   * @param {HTMLElement} listElement - Elementul pentru lista de sugestii.
+   * @param {Function} onSelectCallback - Functie apelata la selectarea unui oras.
+   */
   constructor(inputElement, listElement, onSelectCallback) {
     this.input = inputElement;
     this.list = listElement;
@@ -9,20 +18,30 @@ export class AutocompleteController {
     this.init();
   }
 
+  /**
+   * Initializeaza event listeners pentru input si document.
+   */
   init() {
     this.input.addEventListener("input", (e) => this.handleInput(e));
     this.input.addEventListener("click", (e) => this.handleClick(e));
     this.input.addEventListener("keydown", (e) => this.handleKeydown(e));
-
     document.addEventListener("click", (e) => this.handleOutsideClick(e));
   }
 
+  /**
+   * Gestioneaza evenimentul de input si afiseaza sugestiile.
+   * @param {Event} e - Evenimentul de input.
+   */
   handleInput(e) {
     const query = e.target.value;
     const suggestions = this.filterCities(query);
     this.showSuggestions(suggestions);
   }
 
+  /**
+   * Gestioneaza click-ul pe input si afiseaza sugestiile.
+   * @param {Event} e - Evenimentul de click.
+   */
   handleClick(e) {
     const query = e.target.value;
     const suggestions = this.filterCities(query);
@@ -34,6 +53,10 @@ export class AutocompleteController {
     }
   }
 
+  /**
+   * Gestioneaza navigarea cu tastele in lista de sugestii.
+   * @param {KeyboardEvent} e - Evenimentul de tastatura.
+   */
   handleKeydown(e) {
     const items = this.list.querySelectorAll(".autocomplete-item");
 
@@ -58,12 +81,21 @@ export class AutocompleteController {
     }
   }
 
+  /**
+   * Ascunde sugestiile daca se face click in afara inputului.
+   * @param {Event} e - Evenimentul de click.
+   */
   handleOutsideClick(e) {
     if (!e.target.closest(".input-container")) {
       this.hideSuggestions();
     }
   }
 
+  /**
+   * Filtreaza orasele dupa query.
+   * @param {string} query - Textul introdus de utilizator.
+   * @returns {Array<string>} - Lista de sugestii.
+   */
   filterCities(query) {
     if (!query || query.length < 2) return [];
     return cities
@@ -71,6 +103,10 @@ export class AutocompleteController {
       .slice(0, 8);
   }
 
+  /**
+   * Afiseaza sugestiile in lista.
+   * @param {Array<string>} suggestions - Lista de sugestii.
+   */
   showSuggestions(suggestions) {
     this.list.innerHTML = "";
 
@@ -91,11 +127,18 @@ export class AutocompleteController {
     this.selectedIndex = -1;
   }
 
+  /**
+   * Ascunde lista de sugestii.
+   */
   hideSuggestions() {
     this.list.classList.add("hidden");
     this.selectedIndex = -1;
   }
 
+  /**
+   * Selecteaza un oras din lista si apeleaza callback-ul.
+   * @param {string} city - Orasul selectat.
+   */
   selectCity(city) {
     this.input.value = city;
     this.hideSuggestions();
@@ -104,6 +147,10 @@ export class AutocompleteController {
     }
   }
 
+  /**
+   * Navigheaza in lista de sugestii cu tastele sus/jos.
+   * @param {string} direction - "up" sau "down".
+   */
   navigateList(direction) {
     const items = this.list.querySelectorAll(".autocomplete-item");
     if (items.length === 0) return;
@@ -126,6 +173,9 @@ export class AutocompleteController {
     }
   }
 
+  /**
+   * Curata inputul si ascunde sugestiile.
+   */
   clear() {
     this.input.value = "";
     this.hideSuggestions();
