@@ -40,7 +40,7 @@ jobs:
           path: "."
       - name: Inlocuieste API_KEY in config.js cu secretul din Actions
         run: |
-          sed -i 's/API_KEY: "your_production_api_key"/API_KEY: "${{ secrets.API_KEY }}"/' ./modules/config.js
+          sed -i 's/API_KEY: "your_production_api_key"/API_KEY: "'${API_KEY}'"/' ./modules/config.js
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
