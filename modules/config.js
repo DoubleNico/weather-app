@@ -17,8 +17,12 @@ export const MOCK_DATA = {
   },
 };
 
+const isDevelopment =
+  window.location.hostname === "localhost" ||
+  window.location.hostname === "127.0.0.1";
+
 export const CONFIG = {
-  API_KEY: "",
+  API_KEY: isDevelopment ? "your_dev_api_key" : "your_production_api_key",
   API_BASE_URL: "https://api.openweathermap.org/data/2.5",
   DEFAULT_UNITS: "metric",
   DEFAULT_LANG: "ro",
@@ -28,7 +32,7 @@ export const CONFIG = {
     USER_PREFERENCES: "weather_user_prefs",
   },
   LOGGING: {
-    ENABLED: true,
+    ENABLED: isDevelopment,
     LEVEL: "info", // 'debug', 'info', 'warn', 'error'
     MAX_LOGS: 100,
   },
