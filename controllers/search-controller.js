@@ -12,14 +12,26 @@ import {
 import { historyService } from "../modules/history-service.js";
 import { ERROR_MESSAGES } from "../modules/config.js";
 
+/**
+ * Controller pentru gestionarea cautarilor meteo si a locatiei curente.
+ */
 export class SearchController {
+  /**
+   * @param {Object} autocompleteController - Controllerul pentru autocomplete (optional).
+   */
   constructor(autocompleteController) {
+    /** @type {Object} */
     this.autocomplete = autocompleteController;
+    /** @type {HTMLFormElement} */
     this.searchForm = document.querySelector("#search-form");
+    /** @type {HTMLButtonElement} */
     this.locationBtn = document.querySelector("#location-btn");
     this.init();
   }
 
+  /**
+   * Initializeaza event listeners pentru formular si butonul de locatie.
+   */
   init() {
     this.searchForm.addEventListener("submit", (e) => this.handleSearch(e));
     this.locationBtn.addEventListener("click", () =>
@@ -27,6 +39,12 @@ export class SearchController {
     );
   }
 
+  /**
+   * Valideaza inputul pentru oras.
+   * @param {string} value - Valoarea introdusa de utilizator.
+   * @returns {string} - Orasul validat.
+   * @throws {Error} - Daca inputul nu este valid.
+   */
   validateCityInput(value) {
     const trimmedValue = value.trim();
 
@@ -53,6 +71,10 @@ export class SearchController {
     return trimmedValue;
   }
 
+  /**
+   * Gestioneaza evenimentul de submit pentru formularul de cautare.
+   * @param {Event} evt - Evenimentul de submit.
+   */
   async handleSearch(evt) {
     evt.preventDefault();
     const cityInput = document.querySelector("#city-input");
@@ -72,6 +94,9 @@ export class SearchController {
     }
   }
 
+  /**
+   * Gestioneaza cautarea meteo pe baza locatiei curente.
+   */
   async handleLocationSearch() {
     try {
       showLoading();

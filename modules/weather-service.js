@@ -1,7 +1,45 @@
 import { showError } from "../controllers/ui-controller.js";
 import { CONFIG, ERROR_MESSAGES, HTTP_STATUS_MESSAGES } from "./config.js";
 
+class WeatherCache {
+  constructor(maxAge = 10 * 60 * 1000) {
+    this.cache = new Map();
+    this.maxAge = maxAge;
+  }
+
+  get(key) {
+    const entry = this.cache.get(key);
+    if (!entry) return null;
+    const isExpired = Date.now() - entry.timestamp > this.maxAge;
+    if (isExpired) {
+      this.cache.delete(key);
+      return null;
+    }
+    return entry.data;
+  }
+
+  set(key, data) {
+    this.cache.set(key, { data, timestamp: Date.now() });
+    this.cleanup();
+  }
+
+  cleanup() {
+    const now = Date.now();
+    for (const [key, entry] of this.cache.entries()) {
+      if (now - entry.timestamp > this.maxAge) {
+        this.cache.delete(key);
+      }
+    }
+  }
+}
+
+export const weatherCache = new WeatherCache();
+
 export const getCurrentWeather = async (city) => {
+  const cacheKey = `city:${city.toLowerCase()}`;
+  const cached = weatherCache.get(cacheKey);
+  if (cached) return cached;
+
   try {
     if (!CONFIG.API_KEY || CONFIG.API_KEY === "api") {
       showError(ERROR_MESSAGES.API_KEY_MISSING);
@@ -27,6 +65,7 @@ export const getCurrentWeather = async (city) => {
       throw new Error(ERROR_MESSAGES.WEATHER_DATA_INVALID);
     }
 
+    weatherCache.set(cacheKey, data);
     return data;
   } catch (error) {
     if (error.name === "TypeError" && error.message.includes("fetch")) {
@@ -42,6 +81,10 @@ export const getCurrentWeather = async (city) => {
 };
 
 export const getWeatherByCoords = async (lat, lon) => {
+  const cacheKey = `coords:${lat},${lon}`;
+  const cached = weatherCache.get(cacheKey);
+  if (cached) return cached;
+
   try {
     if (!CONFIG.API_KEY || CONFIG.API_KEY === "api") {
       throw new Error(ERROR_MESSAGES.API_KEY_MISSING);
@@ -66,6 +109,7 @@ export const getWeatherByCoords = async (lat, lon) => {
       throw new Error(ERROR_MESSAGES.WEATHER_DATA_INVALID);
     }
 
+    weatherCache.set(cacheKey, data);
     return data;
   } catch (error) {
     if (error.name === "TypeError" && error.message.includes("fetch")) {

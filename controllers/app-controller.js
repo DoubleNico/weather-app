@@ -19,7 +19,13 @@ import { ThemeController } from "./theme-controller.js";
 import { logger } from "../modules/logger.js";
 import { historyService } from "../modules/history-service.js";
 
+/**
+ * Controller principal pentru initializarea si gestionarea aplicatiei Weather App.
+ */
 export class AppController {
+  /**
+   * Creeaza o noua instanta AppController.
+   */
   constructor() {
     this.themeController = null;
     this.autocompleteController = null;
@@ -27,6 +33,10 @@ export class AppController {
     this.preferencesController = null;
   }
 
+  /**
+   * Initializeaza toate componentele principale ale aplicatiei.
+   * Porneste tema, autocomplete, cautarea, preferintele si istoricul.
+   */
   async init() {
     try {
       logger.info("App initializing...");
@@ -50,6 +60,9 @@ export class AppController {
     }
   }
 
+  /**
+   * Incarca vremea initiala pentru orasul default la pornirea aplicatiei.
+   */
   async loadInitialWeather() {
     showLoading();
     try {
@@ -62,6 +75,9 @@ export class AppController {
     }
   }
 
+  /**
+   * Initializeaza si afiseaza istoricul cautarilor si adauga event listeners.
+   */
   setupHistory() {
     const history = historyService.getHistory();
     renderHistory(history);
@@ -73,6 +89,10 @@ export class AppController {
     );
   }
 
+  /**
+   * Actualizeaza istoricul cu o noua locatie si re-randeaza lista.
+   * @param {Object} weatherData - Obiectul cu datele meteo pentru locatie.
+   */
   updateHistory(weatherData) {
     historyService.addLocation(weatherData);
     const updatedHistory = historyService.getHistory();
@@ -80,6 +100,10 @@ export class AppController {
     if (updatedHistory.length > 0) showHistory();
   }
 
+  /**
+   * Gestioneaza click-ul pe un item din istoric si incarca vremea pentru acea locatie.
+   * @param {Event} event - Evenimentul de click.
+   */
   async handleHistoryClick(event) {
     const historyItem = event.target.closest(".history-item");
     if (!historyItem) return;
@@ -101,6 +125,9 @@ export class AppController {
     }
   }
 
+  /**
+   * Gestioneaza stergerea intregului istoric de cautari.
+   */
   handleClearHistory() {
     if (confirm("Sigur vrei să stergi tot istoricul de cautari?")) {
       historyService.clearHistory();
@@ -109,6 +136,10 @@ export class AppController {
     }
   }
 
+  /**
+   * Returneaza instantele controllerelor principale.
+   * @returns {Object} - Obiect cu controllerele principale.
+   */
   getControllers() {
     return {
       theme: this.themeController,
