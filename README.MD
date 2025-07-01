@@ -54,6 +54,7 @@ Aplicatia pune accent pe experienta utilizatorului: autocomplete pentru orase, t
 - [ ]  Extended forecast (5 days)
 - [ ]  Weather maps integration
 - [ ]  Multiple locations tracking
+- [ ]  Make API KEYS environment variables 
 
 ## 🛠️ Tehnologii Utilizate
 
@@ -79,8 +80,11 @@ Aplicatia pune accent pe experienta utilizatorului: autocomplete pentru orase, t
 
 ## 🚀 Demo si Screenshots
 
-> [Adauga aici screenshots cu aplicatia pe desktop si mobil, plus un GIF cu autocomplete si istoric]
-
+<p align="center">
+  <img src="screenshots/1.png" alt="Weather App Screenshot 1" width="400"/>
+  <img src="screenshots/2.png" alt="Weather App Screenshot 2" width="400"/>
+  <img src="screenshots/3.png" alt="Weather App Screenshot 3" width="400"/>
+</p>
 ---
 
 ## 📦 Instalare si Rulare
