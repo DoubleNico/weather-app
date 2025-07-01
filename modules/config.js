@@ -23,7 +23,7 @@ const isDevelopment =
 
 export const CONFIG = {
   API_KEY: isDevelopment
-    ? "your_dev_api_key"
+    ? "30957b2d6742800f61a7e2ef73c60fc0"
     : "30957b2d6742800f61a7e2ef73c60fc0",
   API_BASE_URL: "https://api.openweathermap.org/data/2.5",
   DEFAULT_UNITS: "metric",
